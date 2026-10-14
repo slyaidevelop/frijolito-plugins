@@ -39,7 +39,7 @@ Minting is permanent, so:
 
 ## Errors
 
-- `NOT_CONFIGURED`: the user must set `FRIJOLITO_API_KEY` (an `fj_test_…` key with the `notarize` scope) and restart Claude Code.
+- `NOT_CONFIGURED`: no API key was found. Verifying still works. To notarize, the user requests a key from concierge@frijolito.app, saves it in `~/.config/frijolito/api_key` (or sets `FRIJOLITO_API_KEY`), and restarts Claude.
 - `LIVE_KEY_BLOCKED`: a production key is set. Minting production receipts needs `FRIJOLITO_ALLOW_LIVE=1`; confirm with the user first.
 - `401 UNAUTHORIZED`: the key is missing, revoked, or lacks the `notarize` scope.
 - `422 UNPROCESSABLE`: a semantic rule failed, or an idempotency key was reused with a different payload. Quote `detail`; do not loop.
