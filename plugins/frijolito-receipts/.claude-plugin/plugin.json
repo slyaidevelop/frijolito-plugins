@@ -1,11 +1,14 @@
 {
   "name": "frijolito-receipts",
-  "version": "0.1.0",
-  "description": "Notarize moments and verify signed receipts with the Frijolito core app's notary API.",
+  "version": "0.2.0",
+  "description": "Notarize moments and verify signed, tamper-evident Frijolito receipts. Verification is free and needs no key.",
   "author": {
     "name": "Frijolito",
-    "email": "concierge@frijolito.app"
+    "email": "concierge@frijolito.app",
+    "url": "https://frijolito.app"
   },
   "homepage": "https://frijolito.app",
-  "keywords": ["frijolito", "receipts", "notary", "verification"]
+  "repository": "https://github.com/slyaidevelop/frijolito-plugins",
+  "license": "MIT",
+  "keywords": ["frijolito", "receipts", "notary", "verification", "proof", "agreements"]
 }
