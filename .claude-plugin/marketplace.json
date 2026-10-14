@@ -9,7 +9,8 @@
       "name": "frijolito-receipts",
       "source": "./plugins/frijolito-receipts",
       "description": "Notarize moments and verify signed, tamper-evident Frijolito receipts. Verification is free and needs no key.",
-      "version": "0.2.0"
+      "version": "0.3.0"
     }
   ]
 }
+
