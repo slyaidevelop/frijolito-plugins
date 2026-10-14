@@ -4,9 +4,8 @@
       "command": "python3",
       "args": ["${CLAUDE_PLUGIN_ROOT}/server/frijolito_receipts_mcp.py"],
       "env": {
-        "FRIJOLITO_BASE_URL": "${FRIJOLITO_BASE_URL:-https://frijolito.app}",
-        "FRIJOLITO_API_KEY": "${FRIJOLITO_API_KEY:-}",
-        "FRIJOLITO_ALLOW_LIVE": "${FRIJOLITO_ALLOW_LIVE:-0}"
+        "FRIJOLITO_API_KEY": "${user_config.api_key}",
+        "FRIJOLITO_ALLOW_LIVE": "${user_config.allow_live}"
       }
     }
   }
