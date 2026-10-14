@@ -6,12 +6,10 @@ Wraps the Frijolito core app's notary surface:
   verify_receipt   POST {BASE}/functions/verify_receipt    public, read-only
   notarize_moment  POST {BASE}/functions/notarize_moment   Bearer API key (scope: notarize)
 
-Environment:
-  FRIJOLITO_BASE_URL     default https://frijolito.app
-  FRIJOLITO_API_KEY      fj_test_… (or fj_live_…) — only needed for notarize_moment
-  FRIJOLITO_API_KEY_FILE file holding the key when FRIJOLITO_API_KEY is unset
-                         (default ~/.config/frijolito/api_key)
-  FRIJOLITO_ALLOW_LIVE   set to 1 to allow minting with an fj_live_ key
+Configuration comes from the plugin's userConfig, which Claude Code passes in
+through the server's environment (see .mcp.json):
+  FRIJOLITO_API_KEY      api_key: fj_test_… or fj_live_…, only needed for notarize_moment
+  FRIJOLITO_ALLOW_LIVE   allow_live: "true" allows minting with an fj_live_ key
 
 The API key never appears in tool output. Errors from the API are passed
 through as the API's own {error, detail, request_id} envelope.
@@ -26,26 +24,20 @@ import urllib.error
 import urllib.request
 
 SERVER_NAME = "frijolito-receipts"
-SERVER_VERSION = "0.1.0"
+SERVER_VERSION = "0.3.0"
 DEFAULT_PROTOCOL = "2025-06-18"
 
-BASE_URL = (os.environ.get("FRIJOLITO_BASE_URL") or "https://frijolito.app").rstrip("/")
-API_KEY_FILE = os.path.expanduser(os.environ.get("FRIJOLITO_API_KEY_FILE") or "~/.config/frijolito/api_key")
+BASE_URL = "https://frijolito.app"
 
 
-def _load_api_key():
-    key = (os.environ.get("FRIJOLITO_API_KEY") or "").strip()
-    if key:
-        return key
-    try:
-        with open(API_KEY_FILE) as f:
-            return f.read().strip()
-    except OSError:
-        return ""
+def _config(name):
+    value = (os.environ.get(name) or "").strip()
+    # An option the user never set can arrive as the literal placeholder.
+    return "" if value.startswith("${") else value
 
 
-API_KEY = _load_api_key()
-ALLOW_LIVE = os.environ.get("FRIJOLITO_ALLOW_LIVE") == "1"
+API_KEY = _config("FRIJOLITO_API_KEY")
+ALLOW_LIVE = _config("FRIJOLITO_ALLOW_LIVE").lower() in ("1", "true")
 
 RECEIPT_ID_RE = re.compile(r"^FJ-\d{8}-\d{3}-[0-9a-f]{12}$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
@@ -78,8 +70,8 @@ TOOLS = [
         "title": "Notarize a moment (mint a receipt)",
         "description": (
             "Witness a moment between parties and mint a signed, publicly verifiable Frijolito "
-            "receipt. WRITE: creates a permanent receipt record. No money moves. Requires "
-            "FRIJOLITO_API_KEY with the notarize scope. Provide document_hash (preferred) or "
+            "receipt. WRITE: creates a permanent receipt record. No money moves. Requires an "
+            "API key with the notarize scope, set in the plugin's settings. Provide document_hash (preferred) or "
             "document_text (hashed server-side, never stored). An idempotency_key is generated "
             "if omitted and returned so a retry can reuse it without minting twice."
         ),
@@ -173,10 +165,10 @@ def tool_verify_receipt(args):
 def tool_notarize_moment(args):
     if not API_KEY:
         return _result({"error": "NOT_CONFIGURED",
-                        "detail": "Set FRIJOLITO_API_KEY or put the key in ~/.config/frijolito/api_key (an fj_test_… key with the notarize scope), then restart Claude Code."}, True)
+                        "detail": "No API key is set. Add your Frijolito API key in the plugin's settings (/plugin → Frijolito Receipts → Configure), then restart Claude. Verifying receipts works without a key."}, True)
     if API_KEY.startswith("fj_live_") and not ALLOW_LIVE:
         return _result({"error": "LIVE_KEY_BLOCKED",
-                        "detail": "FRIJOLITO_API_KEY is a live key. Set FRIJOLITO_ALLOW_LIVE=1 to mint production receipts."}, True)
+                        "detail": "The API key is a live key. Turn on 'Allow production receipts' in the plugin's settings to mint production receipts."}, True)
     if not args.get("document_hash") and not args.get("document_text"):
         return _result({"error": "BAD_REQUEST", "detail": "Provide document_hash (preferred) or document_text."}, True)
 
