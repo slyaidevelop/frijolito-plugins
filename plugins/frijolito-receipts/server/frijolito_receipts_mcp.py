@@ -9,6 +9,8 @@ Wraps the Frijolito core app's notary surface:
 Environment:
   FRIJOLITO_BASE_URL     default https://frijolito.app
   FRIJOLITO_API_KEY      fj_test_… (or fj_live_…) — only needed for notarize_moment
+  FRIJOLITO_API_KEY_FILE file holding the key when FRIJOLITO_API_KEY is unset
+                         (default ~/.config/frijolito/api_key)
   FRIJOLITO_ALLOW_LIVE   set to 1 to allow minting with an fj_live_ key
 
 The API key never appears in tool output. Errors from the API are passed
@@ -28,7 +30,21 @@ SERVER_VERSION = "0.1.0"
 DEFAULT_PROTOCOL = "2025-06-18"
 
 BASE_URL = (os.environ.get("FRIJOLITO_BASE_URL") or "https://frijolito.app").rstrip("/")
-API_KEY = (os.environ.get("FRIJOLITO_API_KEY") or "").strip()
+API_KEY_FILE = os.path.expanduser(os.environ.get("FRIJOLITO_API_KEY_FILE") or "~/.config/frijolito/api_key")
+
+
+def _load_api_key():
+    key = (os.environ.get("FRIJOLITO_API_KEY") or "").strip()
+    if key:
+        return key
+    try:
+        with open(API_KEY_FILE) as f:
+            return f.read().strip()
+    except OSError:
+        return ""
+
+
+API_KEY = _load_api_key()
 ALLOW_LIVE = os.environ.get("FRIJOLITO_ALLOW_LIVE") == "1"
 
 RECEIPT_ID_RE = re.compile(r"^FJ-\d{8}-\d{3}-[0-9a-f]{12}$")
@@ -157,7 +173,7 @@ def tool_verify_receipt(args):
 def tool_notarize_moment(args):
     if not API_KEY:
         return _result({"error": "NOT_CONFIGURED",
-                        "detail": "Set FRIJOLITO_API_KEY (an fj_test_… key with the notarize scope) and restart Claude Code."}, True)
+                        "detail": "Set FRIJOLITO_API_KEY or put the key in ~/.config/frijolito/api_key (an fj_test_… key with the notarize scope), then restart Claude Code."}, True)
     if API_KEY.startswith("fj_live_") and not ALLOW_LIVE:
         return _result({"error": "LIVE_KEY_BLOCKED",
                         "detail": "FRIJOLITO_API_KEY is a live key. Set FRIJOLITO_ALLOW_LIVE=1 to mint production receipts."}, True)
