@@ -1,0 +1,11 @@
+{
+  "name": "frijolito-receipts",
+  "version": "0.1.0",
+  "description": "Notarize moments and verify signed receipts with the Frijolito core app's notary API.",
+  "author": {
+    "name": "Frijolito",
+    "email": "concierge@frijolito.app"
+  },
+  "homepage": "https://frijolito.app",
+  "keywords": ["frijolito", "receipts", "notary", "verification"]
+}
