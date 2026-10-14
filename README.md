@@ -1,26 +1,38 @@
-# Frijolito plugin marketplace
+<p align="center">
+  <img src="plugins/frijolito-receipts/assets/logo.png" alt="Frijolito logo" width="140">
+</p>
 
-## frijolito-receipts
+<h1 align="center">Frijolito plugins for Claude</h1>
 
-Claude Code plugin for the Frijolito core app's notary API (`https://frijolito.app/functions/...`).
+<p align="center">
+  Official <a href="https://frijolito.app">Frijolito</a> plugins for Claude, Cowork and Claude Code.
+</p>
 
-- `/verify-receipt <FJ-… id or hash>`: public, read-only verification (VALID / INVALID / UNKNOWN)
-- `/notarize <description>`: mints a receipt after showing the payload and getting a yes
-- Skill `frijolito-receipts`: lets Claude use the tools on its own when receipts come up
+---
 
-### Install
+## Plugins
 
-```bash
-/plugin marketplace add <path-or-git-url-of-this-repo>
+| Plugin | What it does |
+|---|---|
+| [**frijolito-receipts**](plugins/frijolito-receipts) | Notarize moments and verify signed, tamper-evident receipts. Verification is free and needs no key. |
+
+## Install
+
+From the Claude plugin directory, search for **Frijolito Receipts**.
+
+Or add this repository as a marketplace in Claude Code:
+
+```
+/plugin marketplace add slyaidevelop/frijolito-plugins
 /plugin install frijolito-receipts@frijolito
 ```
 
-### Configure (only needed for notarizing)
+See the [plugin README](plugins/frijolito-receipts/README.md) for API keys, settings and data handling.
 
-```bash
-export FRIJOLITO_API_KEY=fj_test_...        # needs the notarize scope
-# export FRIJOLITO_ALLOW_LIVE=1             # required to mint with an fj_live_ key
-# export FRIJOLITO_BASE_URL=https://...     # default https://frijolito.app
-```
+## Support
 
-Restart Claude Code after changing these. Requires `python3` (3.9+); no packages.
+concierge@frijolito.app · [frijolito.app](https://frijolito.app)
+
+## License
+
+[MIT](LICENSE) © 2026 Frijolito
