@@ -1,0 +1,15 @@
+{
+  "name": "frijolito",
+  "owner": {
+    "name": "Frijolito",
+    "email": "concierge@frijolito.app"
+  },
+  "plugins": [
+    {
+      "name": "frijolito-receipts",
+      "source": "./plugins/frijolito-receipts",
+      "description": "Notarize moments and verify signed receipts with the Frijolito core app's notary API.",
+      "version": "0.1.0"
+    }
+  ]
+}
