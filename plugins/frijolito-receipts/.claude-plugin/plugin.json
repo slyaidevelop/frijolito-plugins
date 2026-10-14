@@ -1,6 +1,7 @@
 {
   "name": "frijolito-receipts",
-  "version": "0.2.0",
+  "displayName": "Frijolito Receipts",
+  "version": "0.3.0",
   "description": "Notarize moments and verify signed, tamper-evident Frijolito receipts. Verification is free and needs no key.",
   "author": {
     "name": "Frijolito",
@@ -10,5 +11,24 @@
   "homepage": "https://frijolito.app",
   "repository": "https://github.com/slyaidevelop/frijolito-plugins",
   "license": "MIT",
-  "keywords": ["frijolito", "receipts", "notary", "verification", "proof", "agreements"]
+  "keywords": ["frijolito", "receipts", "notary", "verification", "proof", "agreements"],
+  "icon": "./assets/logo.png",
+  "documentationUrl": "https://github.com/slyaidevelop/frijolito-plugins/blob/main/plugins/frijolito-receipts/README.md",
+  "supportUrl": "https://frijolito.app",
+  "privacyPolicyUrl": "https://frijolito.app/privacy",
+  "termsOfServiceUrl": "https://frijolito.app/terms",
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "Frijolito API key",
+      "description": "Only needed to notarize. Verifying receipts works without a key. Request one from concierge@frijolito.app (fj_test_… or fj_live_…).",
+      "sensitive": true
+    },
+    "allow_live": {
+      "type": "boolean",
+      "title": "Allow production receipts",
+      "description": "Turn on to let an fj_live_ key mint production receipts. Leave off while testing.",
+      "default": false
+    }
+  }
 }
