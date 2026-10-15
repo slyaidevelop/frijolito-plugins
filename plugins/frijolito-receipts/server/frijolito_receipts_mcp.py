@@ -24,7 +24,7 @@ import urllib.error
 import urllib.request
 
 SERVER_NAME = "frijolito-receipts"
-SERVER_VERSION = "0.3.0"
+SERVER_VERSION = "0.4.0"
 DEFAULT_PROTOCOL = "2025-06-18"
 
 BASE_URL = "https://frijolito.app"
@@ -39,7 +39,9 @@ def _config(name):
 API_KEY = _config("FRIJOLITO_API_KEY")
 ALLOW_LIVE = _config("FRIJOLITO_ALLOW_LIVE").lower() in ("1", "true")
 
-RECEIPT_ID_RE = re.compile(r"^FJ-\d{8}-\d{3}-[0-9a-f]{12}$")
+# FJ- receipts are minted by notarize_moment; FJ2- receipts are connector
+# observations (e.g. Shopify order events). Mirrors notaryOpenApi.ts.
+RECEIPT_ID_RE = re.compile(r"^(FJ-\d{8}-\d{3}-[0-9a-f]{12}|FJ2-[0-9a-f]{64})$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 TIMEOUT_S = 30
 
@@ -51,15 +53,22 @@ TOOLS = [
         "name": "verify_receipt",
         "title": "Verify a Frijolito receipt",
         "description": (
-            "Verify a Frijolito receipt by ID (FJ-YYYYMMDD-NNN-xxxxxxxxxxxx) or by its "
-            "64-char sha256 receipt hash. Public and read-only: no API key, no side effects. "
-            "Returns a verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry)."
+            "Verify a Frijolito receipt by ID (FJ-YYYYMMDD-NNN-xxxxxxxxxxxx, or FJ2- followed by "
+            "64 hex chars for connector receipts such as Shopify order events) or by its 64-char "
+            "sha256 receipt hash. Public and read-only: no API key, no side effects. Returns a "
+            "verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry). A VALID "
+            "verdict also carries `root`: the daily signed root covering the receipt and its "
+            "inclusion proof, or root: null with a root_reason when the day is not rooted yet."
         ),
         "inputSchema": {
             "type": "object",
             "properties": {
                 "receipt_id": {"type": "string", "pattern": RECEIPT_ID_RE.pattern},
                 "receipt_hash": {"type": "string", "pattern": SHA256_RE.pattern},
+                "receipt_version": {
+                    "type": "string", "enum": ["2"],
+                    "description": "Set to '2' to look up an FJ2- connector receipt by receipt_hash.",
+                },
             },
             "description": "Exactly one of receipt_id or receipt_hash.",
         },
@@ -153,10 +162,16 @@ def tool_verify_receipt(args):
     if bool(rid) == bool(rhash):
         return _result({"error": "BAD_REQUEST", "detail": "Provide exactly one of receipt_id or receipt_hash."}, True)
     if rid and not RECEIPT_ID_RE.match(rid):
-        return _result({"error": "BAD_REQUEST", "detail": "receipt_id must look like FJ-YYYYMMDD-NNN-xxxxxxxxxxxx."}, True)
+        return _result({"error": "BAD_REQUEST",
+                        "detail": "receipt_id must look like FJ-YYYYMMDD-NNN-xxxxxxxxxxxx or FJ2- followed by 64 hex chars."}, True)
     if rhash and not SHA256_RE.match(rhash):
         return _result({"error": "BAD_REQUEST", "detail": "receipt_hash must be 64 lowercase hex chars."}, True)
+    version = (args.get("receipt_version") or "").strip()
+    if version and version != "2":
+        return _result({"error": "BAD_REQUEST", "detail": "receipt_version, if given, must be '2'."}, True)
     body = {"receipt_id": rid} if rid else {"receipt_hash": rhash}
+    if rhash and version == "2":
+        body["receipt_version"] = "2"
     status, data = _post("/functions/verify_receipt", body)
     return _result({"http_status": status, **data} if isinstance(data, dict) else {"http_status": status, "body": data},
                    is_error=status != 200)

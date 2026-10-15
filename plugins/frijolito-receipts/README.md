@@ -18,7 +18,7 @@ This plugin brings Frijolito into Claude, Cowork and Claude Code.
 
 | | What it does | Needs an API key |
 |---|---|---|
-| **Verify a receipt** | Check any receipt ID (`FJ-…`) or receipt hash and get a verdict: **VALID**, **INVALID** or **UNKNOWN**, plus who the parties were, what was recorded and when. | No |
+| **Verify a receipt** | Check any receipt ID (`FJ-…` or `FJ2-…`) or receipt hash and get a verdict: **VALID**, **INVALID** or **UNKNOWN**, plus who the parties were, what was recorded and when, and whether it is sealed in a daily root anchored in Bitcoin. | No |
 | **Notarize a moment** | Record an agreement between parties and get back a receipt ID and a public verification link. | Yes |
 
 Just ask in plain language: *"Is receipt FJ-20261014-001-f4094fcae7d7 legit?"* or *"Notarize that Acme and Beta agreed to the attached terms."*
