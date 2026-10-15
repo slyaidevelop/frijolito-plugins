@@ -24,7 +24,15 @@ Report the verdict plainly:
 
 A `VALID` receipt whose `status` is `expired` or `revoked` was genuine but no longer stands. Say so.
 
-Receipt IDs look like `FJ-YYYYMMDD-NNN-xxxxxxxxxxxx`; receipt hashes are 64 lowercase hex characters.
+Receipt IDs look like `FJ-YYYYMMDD-NNN-xxxxxxxxxxxx` (notarized moments) or `FJ2-` followed by 64 hex characters (connector receipts, such as a Shopify order event). Receipt hashes are 64 lowercase hex characters; to look up an FJ2 receipt by hash, also pass `receipt_version: "2"`.
+
+### Daily roots
+
+A `VALID` verdict also carries `root`. Each UTC day, Frijolito signs one root over every receipt of that day (Ed25519 and SLH-DSA, both required) and anchors it in Bitcoin through OpenTimestamps.
+
+- `root` present: the receipt is sealed in that day's root. Mention `root_seq` and `anchor_status` (`pending` means submitted to OpenTimestamps; `confirmed` means it is in a Bitcoin block).
+- `root: null` with `root_reason: "not_yet_rooted"`: the receipt is genuine but its day has not been sealed yet. This is normal for receipts from today.
+- Any other `root_reason`: say the receipt itself is valid but the root proof could not be produced, and quote the reason.
 
 ## Notarizing
 
