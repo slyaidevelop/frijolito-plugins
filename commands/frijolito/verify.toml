@@ -1,0 +1,8 @@
+description = "Verify a Frijolito receipt by ID or hash"
+prompt = """
+Verify this Frijolito receipt with `invoke_verify_frijolito_receipt`: {{args}}
+
+If it starts with `FJ-` or `FJ2-`, pass it as `receipt_id`. If it is 64 hex characters, pass it as `receipt_hash`. If nothing was given, ask for one.
+
+Lead with the verdict (VALID, INVALID or UNKNOWN), then parties, moment, date and status.
+"""

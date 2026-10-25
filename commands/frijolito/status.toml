@@ -1,0 +1,6 @@
+description = "See your Frijolito requests and projects"
+prompt = """
+Call `invoke_my_frijolito_requests` and `invoke_my_frijolito_context`.
+
+List each request with its state and when it last changed, newest first. Put anything `waiting_on_you` at the top and say what it needs. Then name open projects in one line each. {{args}}
+"""
