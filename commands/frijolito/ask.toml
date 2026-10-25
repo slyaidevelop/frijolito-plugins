@@ -1,0 +1,6 @@
+description = "Ask Frijolito, the concierge"
+prompt = """
+Send this to Frijolito with `message_frijolito` and relay the answer in its own words: {{args}}
+
+If nothing was given, ask what they want to say.
+"""
