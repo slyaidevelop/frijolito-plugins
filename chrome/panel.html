@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frijolito</title>
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+  <main id="log" aria-live="polite">
+    <section id="hello">
+      <svg class="bean" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path class="draw" d="M49.3 48C52 43 52.5 38 52.3 33C52 22 47.5 14 44 11C40.5 8.5 36.5 8 33.1 8C24 8 17.5 15 16.3 22.9C15.5 28 14.5 31 12.5 34.5C10.5 38 10.4 42 11 45C12.5 52 20 58 30 58C35 58 39 56.5 42.4 54.1" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <path class="eye" d="M24.3 29.6v2.9" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/>
+        <path class="eye" d="M42.4 29.6v2.9" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/>
+        <path class="smile" d="M29.1 35.7Q33.2 39.5 37.3 35.7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <circle class="dot" cx="46.3" cy="52" r="2.1"/>
+      </svg>
+      <h1>Hi. I'm Frijolito.</h1>
+      <p>Ask me anything, or paste a receipt to check it.</p>
+    </section>
+  </main>
+  <form id="say" autocomplete="off">
+    <textarea id="text" rows="1" maxlength="1500" placeholder="Ask, or paste a receipt" aria-label="Message Frijolito"></textarea>
+    <button id="send" type="submit" aria-label="Send" disabled>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </form>
+  <script type="module" src="panel.js"></script>
+</body>
+</html>

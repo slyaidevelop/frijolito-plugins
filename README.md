@@ -5,7 +5,7 @@
 <h1 align="center">Frijolito plugins for Claude</h1>
 
 <p align="center">
-  Official <a href="https://frijolito.app">Frijolito</a> plugins for Claude, Cowork, Claude Code and Gemini.
+  Official <a href="https://frijolito.app">Frijolito</a> plugins for Claude, Cowork, Claude Code, Gemini and Chrome.
 </p>
 
 ---
@@ -15,6 +15,7 @@
 | Plugin | What it does |
 |---|---|
 | [**frijolito-receipts**](plugins/frijolito-receipts) | Notarize moments and verify signed, tamper-evident receipts. Verification is free and needs no key. |
+| [**Frijolito for Chrome**](chrome) | Ask Frijolito anything and verify a receipt from any page, in Chrome's side panel. |
 | [**frijolito** for Gemini](#gemini) | Verify receipts, read your Frijolito context, and file or follow requests with the team, from Gemini CLI. |
 
 ## Install
@@ -46,6 +47,10 @@ The first Frijolito call opens your browser to sign in. Then:
 | `/frijolito:verify` | Check a receipt by ID or hash |
 
 It connects to Frijolito's MCP server at `https://frijolito.app/api/mcp` and only ever sees your own account. Nothing is approved, built or charged by filing a request. If tools go missing, run `/mcp auth frijolito`.
+
+## Chrome
+
+Load the [`chrome`](chrome) folder unpacked from `chrome://extensions`, or install it from the Chrome Web Store once it is listed. See the [Chrome README](chrome/README.md).
 
 ## Support
 
