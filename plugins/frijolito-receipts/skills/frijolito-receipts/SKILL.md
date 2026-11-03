@@ -47,7 +47,7 @@ Minting is permanent, so:
 2. Prefer `document_hash` (sha256 of the exact agreed bytes) over `document_text`. To hash a local file: `shasum -a 256 <file>`. `document_text` is hashed server-side and never stored.
 3. Set `witness_model` to your own model identity (for example `claude-opus-5-5`).
 4. Evidence pointers need a real 64-char sha256. Never invent or abbreviate one.
-5. **Never retry on your own.** If a call times out, the connection drops, or Frijolito answers with a server error, the outcome is unknown: a receipt may or may not exist. Tell the user that plainly, give them the `idempotency_key` if the result shows one, and try again only if they ask, with that same key. A new key can mint a second receipt. Never say a retry is safe.
+5. **Never retry on your own.** If a call times out, the connection drops, or Frijolito answers with a server error, the outcome is unknown: a receipt may or may not exist. Tell the user that plainly, give them the `idempotency_key` the result returns (look for `outcome_unknown`), and try again only if they ask, with that same key. A new key can mint a second receipt. Never say a retry is safe.
 6. After minting, give the user the `receipt_id` and `verify_url`.
 
 ## Errors

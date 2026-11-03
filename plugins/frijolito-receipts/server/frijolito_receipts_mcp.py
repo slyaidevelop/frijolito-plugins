@@ -15,6 +15,7 @@ The API key never appears in tool output. Errors from the API are passed
 through as the API's own {error, detail, request_id} envelope.
 """
 
+import http.client
 import json
 import os
 import re
@@ -194,12 +195,29 @@ def tool_notarize_moment(args):
               "document_text", "evidence_pointers", "external_ref")
     body = {k: args[k] for k in fields if args.get(k) not in (None, "", [])}
     idem = (args.get("idempotency_key") or "").strip() or str(uuid.uuid4())
-    status, data = _post("/functions/notarize_moment", body, {
-        "Authorization": "Bearer " + API_KEY,
-        "Idempotency-Key": idem,
-    })
+    try:
+        status, data = _post("/functions/notarize_moment", body, {
+            "Authorization": "Bearer " + API_KEY,
+            "Idempotency-Key": idem,
+        })
+    except (OSError, http.client.HTTPException) as e:
+        # Timeouts, dropped connections and cut-off replies. The request may
+        # have reached Frijolito, so a receipt may or may not exist. Hand back
+        # the key that was sent; never retry here.
+        return _result({"error": "OUTCOME_UNKNOWN", "outcome_unknown": True,
+                        "idempotency_key": idem,
+                        "detail": "No answer from Frijolito (%s). A receipt may or may not have been minted. "
+                                  "Do not retry automatically. If the user chooses to try again, reuse this "
+                                  "idempotency_key so Frijolito can replay the original receipt." % type(e).__name__}, True)
     payload = {"http_status": status, "idempotency_key": idem}
     payload.update(data if isinstance(data, dict) else {"body": data})
+    non_json = isinstance(data, dict) and data.get("error") == "NON_JSON_RESPONSE"
+    if status >= 500 or (non_json and status in (200, 201)):
+        payload["outcome_unknown"] = True
+        payload["idempotency_key"] = idem
+        payload["note"] = ("The outcome is unknown: a receipt may or may not have been minted. Do not retry "
+                           "automatically. If the user chooses to try again, reuse this idempotency_key.")
+        return _result(payload, True)
     return _result(payload, is_error=status not in (200, 201))
 
 
