@@ -43,8 +43,16 @@ class WordingTest(unittest.TestCase):
     def test_no_overclaims(self):
         t = self.text()
         for phrase in ("is genuine", "was genuine", "witnesses a moment", "Witness a moment",
-                       "No accidental duplicates", "without minting twice"):
+                       "No accidental duplicates", "without minting twice",
+                       "Every notarization carries an idempotency key", "claude-opus"):
             self.assertNotIn(phrase, t, phrase)
+
+    def test_fj2_prefix_is_not_proof_of_observation(self):
+        t = self.text()
+        for phrase in ("Only these may be described as independently witnessed",
+                       "observed from an outside source", "FJ2- observed"):
+            self.assertNotIn(phrase, t, phrase)
+        self.assertIn("prefix alone", read(PLUGIN, "skills", "frijolito-receipts", "SKILL.md"))
 
     def test_two_kinds_of_receipt_are_explained(self):
         for doc in (("README.md",), ("skills", "frijolito-receipts", "SKILL.md")):

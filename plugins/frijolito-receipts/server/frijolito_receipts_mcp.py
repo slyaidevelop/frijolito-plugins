@@ -41,7 +41,7 @@ API_KEY = _config("FRIJOLITO_API_KEY")
 ALLOW_LIVE = _config("FRIJOLITO_ALLOW_LIVE").lower() in ("1", "true")
 
 # FJ- receipts are minted by notarize_moment; FJ2- receipts are connector
-# observations (e.g. Shopify order events). Mirrors notaryOpenApi.ts.
+# receipts (e.g. Shopify order events). Mirrors notaryOpenApi.ts.
 RECEIPT_ID_RE = re.compile(r"^(FJ-\d{8}-\d{3}-[0-9a-f]{12}|FJ2-[0-9a-f]{64})$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 TIMEOUT_S = 30
@@ -58,8 +58,10 @@ TOOLS = [
             "64 hex chars for connector receipts such as Shopify order events) or by its 64-char "
             "sha256 receipt hash. Public and read-only: no API key, no side effects. Returns a "
             "verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry). VALID means "
-            "the record is intact and Frijolito issued it; FJ- receipts are self-reported, FJ2- "
-            "receipts are observed from an outside source. A VALID verdict also carries `root`: the daily signed root covering the receipt and its "
+            "the record is intact and Frijolito issued it (signed integrity). FJ- receipts are "
+            "self-reported; FJ2- receipts come from a connector reporting an outside event. The "
+            "prefix alone does not prove independent observation: report what this receipt's own "
+            "fields show about its source and evidence, separately from the integrity check. A VALID verdict also carries `root`: the daily signed root covering the receipt and its "
             "inclusion proof, or root: null with a root_reason when the day is not rooted yet."
         ),
         "inputSchema": {
@@ -84,8 +86,10 @@ TOOLS = [
             "Frijolito. It proves what was reported and when, not that it happened. WRITE: creates "
             "a permanent receipt record; confirm with the user first. No money moves. Requires an "
             "API key with the notarize scope, set in the plugin's settings. Provide document_hash (preferred) or "
-            "document_text (hashed server-side, never stored). An idempotency_key is generated "
-            "if omitted. Never retry automatically: after a timeout or dropped connection the "
+            "document_text (hashed server-side, never stored). If idempotency_key is omitted, a new "
+            "one is generated for each call, so repeated calls without a key are NOT idempotent and "
+            "can mint separate receipts; a call that reuses the same key lets Frijolito replay the "
+            "original receipt. Never retry automatically: after a timeout or dropped connection the "
             "outcome is unknown, and a new key can mint a second receipt."
         ),
         "inputSchema": {
@@ -117,11 +121,11 @@ TOOLS = [
                     },
                 },
                 "external_ref": {"type": "string", "description": "Caller's correlation id; echoed back."},
-                "idempotency_key": {"type": "string", "description": "Reuse on retry to replay instead of minting twice."},
+                "idempotency_key": {"type": "string", "description": "Optional. Reuse the same key to let Frijolito replay the original receipt. If omitted, a new key is generated for this call."},
             },
             "required": ["parties", "moment_label", "witness_model"],
         },
-        "annotations": {"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
+        "annotations": {"readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": True},
     },
 ]
 

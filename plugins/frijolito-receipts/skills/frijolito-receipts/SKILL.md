@@ -10,7 +10,7 @@ Frijolito keeps **signed receipts, not payments**. No money moves through these 
 Two kinds of receipt prove different things. Never blur them:
 
 - `FJ-` receipts are **self-reported**: the caller told Frijolito what happened and Frijolito signed that record. A valid one proves what was reported, by whom and when, and that the record is unchanged. It does not prove the event happened or that its claims are true.
-- `FJ2-` receipts are **observed from an outside source**, such as a Shopify order event. Only these may be described as independently witnessed.
+- `FJ2-` receipts come from a **connector that reports an outside event**, such as a Shopify order event. The prefix alone does not make a receipt independently witnessed. Describe how a particular receipt was observed only from what its own fields show (its source and evidence), and keep that apart from the signature check, which proves integrity only.
 
 Tools (from the `frijolito-receipts` MCP server):
 
@@ -23,7 +23,7 @@ Report the verdict plainly:
 
 | Verdict | Meaning | What to tell the user |
 |---|---|---|
-| `VALID` | Registry hit, hash and signatures check out | The record is intact and Frijolito issued it. Summarize parties, moment_label, created_at, status, and say which kind it is (`FJ-` self-reported or `FJ2-` observed). |
+| `VALID` | Registry hit, hash and signatures check out | The record is intact and Frijolito issued it. Summarize parties, moment_label, created_at, status, and say which kind it is (`FJ-` self-reported or `FJ2-` connector receipt). Report any source or evidence the receipt itself shows as a separate point from integrity. |
 | `INVALID` | The receipt fails a check | Do **not** trust it. Treat it as tampered or malformed and quote `detail`. |
 | `UNKNOWN` | Well-formed, but this issuer never minted it (or it was deleted) | It cannot be confirmed. This is not the same as "fake", but it is not proof either. |
 
@@ -45,7 +45,7 @@ Minting is permanent, so:
 
 1. Before calling `notarize_moment`, show the user exactly what will be recorded (parties with roles, moment_label, and which document is being hashed) and get a clear yes.
 2. Prefer `document_hash` (sha256 of the exact agreed bytes) over `document_text`. To hash a local file: `shasum -a 256 <file>`. `document_text` is hashed server-side and never stored.
-3. Set `witness_model` to your own model identity (for example `claude-opus-5-5`).
+3. Set `witness_model` to your own model identity (the model id you are running as).
 4. Evidence pointers need a real 64-char sha256. Never invent or abbreviate one.
 5. **Never retry on your own.** If a call times out, the connection drops, or Frijolito answers with a server error, the outcome is unknown: a receipt may or may not exist. Tell the user that plainly, give them the `idempotency_key` the result returns (look for `outcome_unknown`), and try again only if they ask, with that same key. A new key can mint a second receipt. Never say a retry is safe.
 6. After minting, give the user the `receipt_id` and `verify_url`.

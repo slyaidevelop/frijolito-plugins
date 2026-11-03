@@ -88,6 +88,13 @@ class NotarizeGuardsTest(unittest.TestCase):
         tool = next(t for t in server.TOOLS if t["name"] == "notarize_moment")
         self.assertFalse(tool["annotations"]["readOnlyHint"])
 
+    def test_notarize_is_not_advertised_as_idempotent(self):
+        # idempotency_key is optional and a missing key gets a fresh UUID per call.
+        tool = next(t for t in server.TOOLS if t["name"] == "notarize_moment")
+        self.assertFalse(tool["annotations"]["idempotentHint"])
+        self.assertIn("NOT idempotent", tool["description"])
+        self.assertNotIn("idempotency_key", tool["inputSchema"]["required"])
+
 
 class StdioProtocolTest(unittest.TestCase):
     def test_initialize_reports_version(self):

@@ -15,7 +15,7 @@
 There are two kinds of receipt, and they prove different things:
 
 - **`FJ-` receipts** are self-reported. The caller tells Frijolito what happened and Frijolito signs that record. A valid `FJ-` receipt proves what was reported, by whom and when, and that it hasn't been changed since. It does not prove that the event happened or that its claims are true.
-- **`FJ2-` receipts** are observed from an outside source, such as a Shopify order event, instead of being reported by the caller.
+- **`FJ2-` receipts** come from a connector that reports an outside event, such as a Shopify order event, instead of from the caller. The prefix alone doesn't prove independent observation: Claude reports what each receipt's own evidence says about its source, separately from whether its signature checks out.
 
 This plugin is for **Claude Code**. It runs a small local Python server on your computer, so it is not proven to run in Claude on the web (claude.ai), and it hasn't been tested in Cowork.
 
@@ -37,7 +37,7 @@ In Claude Code you can also use the slash commands:
 
 - **Nothing is minted without your yes.** Before notarizing, Claude shows you exactly what will be recorded and waits for confirmation.
 - **Your document stays yours.** Claude sends only a SHA-256 fingerprint of the document when it can. If document text is sent instead, Frijolito hashes it and discards the text immediately.
-- **Retries need care.** Every notarization carries an idempotency key, and Frijolito replays the original receipt when the same key is sent again. If a call times out or the connection drops before Frijolito answers, the outcome is **unknown**: a receipt may or may not have been minted. The result then says `outcome_unknown` and gives back the exact key that was sent. Claude never retries on its own. If you choose to try again, reuse that key; whether Frijolito replays depends on its server still holding the first attempt, so it is not a promise of no duplicates. A new key can mint a second receipt.
+- **Retries need care.** You can pass an idempotency key, and Frijolito replays the original receipt when the same key is sent again. If you don't pass one, each call gets a new key, so two calls without a key are not idempotent. If a call times out or the connection drops before Frijolito answers, the outcome is **unknown**: a receipt may or may not have been minted. The result then says `outcome_unknown` and gives back the exact key that was sent. Claude never retries on its own. If you choose to try again, reuse that key; whether Frijolito replays depends on its server still holding the first attempt, so it is not a promise of no duplicates. A new key can mint a second receipt.
 - **Test keys can't make production receipts.** `fj_test_` keys mint demo receipts that are clearly marked and can never verify as production. `fj_live_` keys are refused unless you explicitly allow them.
 - **Your API key is never shown.** It is kept in Claude's secure credential store and never appears in Claude's output.
 
