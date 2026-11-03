@@ -73,6 +73,22 @@ class NotarizeGuardsTest(unittest.TestCase):
             server.API_KEY, server.ALLOW_LIVE = real_key, real_allow
 
 
+    def test_missing_key_never_calls_the_api(self):
+        real_key, real_post = server.API_KEY, server._post
+        calls = []
+        server.API_KEY, server._post = "", lambda *a, **k: calls.append(a)
+        try:
+            out = server.tool_notarize_moment({"parties": [], "moment_label": "x", "witness_model": "m", "document_text": "t"})
+            self.assertEqual(out["structuredContent"]["error"], "NOT_CONFIGURED")
+            self.assertEqual(calls, [])
+        finally:
+            server.API_KEY, server._post = real_key, real_post
+
+    def test_notarize_is_marked_as_a_write(self):
+        tool = next(t for t in server.TOOLS if t["name"] == "notarize_moment")
+        self.assertFalse(tool["annotations"]["readOnlyHint"])
+
+
 class StdioProtocolTest(unittest.TestCase):
     def test_initialize_reports_version(self):
         sent = []
@@ -82,7 +98,7 @@ class StdioProtocolTest(unittest.TestCase):
             server.handle({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}})
         finally:
             server._send = real
-        self.assertEqual(sent[0]["result"]["serverInfo"]["version"], "0.4.0")
+        self.assertEqual(sent[0]["result"]["serverInfo"]["version"], "0.5.0")
 
 
 if __name__ == "__main__":

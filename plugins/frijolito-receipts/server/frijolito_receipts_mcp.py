@@ -24,7 +24,7 @@ import urllib.error
 import urllib.request
 
 SERVER_NAME = "frijolito-receipts"
-SERVER_VERSION = "0.4.0"
+SERVER_VERSION = "0.5.0"
 DEFAULT_PROTOCOL = "2025-06-18"
 
 BASE_URL = "https://frijolito.app"
@@ -56,8 +56,9 @@ TOOLS = [
             "Verify a Frijolito receipt by ID (FJ-YYYYMMDD-NNN-xxxxxxxxxxxx, or FJ2- followed by "
             "64 hex chars for connector receipts such as Shopify order events) or by its 64-char "
             "sha256 receipt hash. Public and read-only: no API key, no side effects. Returns a "
-            "verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry). A VALID "
-            "verdict also carries `root`: the daily signed root covering the receipt and its "
+            "verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry). VALID means "
+            "the record is intact and Frijolito issued it; FJ- receipts are self-reported, FJ2- "
+            "receipts are observed from an outside source. A VALID verdict also carries `root`: the daily signed root covering the receipt and its "
             "inclusion proof, or root: null with a root_reason when the day is not rooted yet."
         ),
         "inputSchema": {
@@ -76,13 +77,15 @@ TOOLS = [
     },
     {
         "name": "notarize_moment",
-        "title": "Notarize a moment (mint a receipt)",
+        "title": "Record a moment (mint a self-reported receipt)",
         "description": (
-            "Witness a moment between parties and mint a signed, publicly verifiable Frijolito "
-            "receipt. WRITE: creates a permanent receipt record. No money moves. Requires an "
+            "Record a moment reported by the caller and mint a self-reported FJ- receipt signed by "
+            "Frijolito. It proves what was reported and when, not that it happened. WRITE: creates "
+            "a permanent receipt record; confirm with the user first. No money moves. Requires an "
             "API key with the notarize scope, set in the plugin's settings. Provide document_hash (preferred) or "
             "document_text (hashed server-side, never stored). An idempotency_key is generated "
-            "if omitted and returned so a retry can reuse it without minting twice."
+            "if omitted. Never retry automatically: after a timeout or dropped connection the "
+            "outcome is unknown, and a new key can mint a second receipt."
         ),
         "inputSchema": {
             "type": "object",
@@ -97,7 +100,7 @@ TOOLS = [
                     },
                 },
                 "moment_label": {"type": "string", "description": "Short human label for what was agreed or happened."},
-                "witness_model": {"type": "string", "description": "Identity of the calling model/agent, recorded on the receipt."},
+                "witness_model": {"type": "string", "description": "Identity of the calling model/agent that recorded the moment (API field name)."},
                 "document_hash": {"type": "string", "pattern": SHA256_RE.pattern},
                 "document_text": {"type": "string"},
                 "evidence_pointers": {
