@@ -15,6 +15,7 @@ The API key never appears in tool output. Errors from the API are passed
 through as the API's own {error, detail, request_id} envelope.
 """
 
+import http.client
 import json
 import os
 import re
@@ -24,7 +25,7 @@ import urllib.error
 import urllib.request
 
 SERVER_NAME = "frijolito-receipts"
-SERVER_VERSION = "0.4.0"
+SERVER_VERSION = "0.5.0"
 DEFAULT_PROTOCOL = "2025-06-18"
 
 BASE_URL = "https://frijolito.app"
@@ -40,7 +41,7 @@ API_KEY = _config("FRIJOLITO_API_KEY")
 ALLOW_LIVE = _config("FRIJOLITO_ALLOW_LIVE").lower() in ("1", "true")
 
 # FJ- receipts are minted by notarize_moment; FJ2- receipts are connector
-# observations (e.g. Shopify order events). Mirrors notaryOpenApi.ts.
+# receipts (e.g. Shopify order events). Mirrors notaryOpenApi.ts.
 RECEIPT_ID_RE = re.compile(r"^(FJ-\d{8}-\d{3}-[0-9a-f]{12}|FJ2-[0-9a-f]{64})$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 TIMEOUT_S = 30
@@ -56,8 +57,11 @@ TOOLS = [
             "Verify a Frijolito receipt by ID (FJ-YYYYMMDD-NNN-xxxxxxxxxxxx, or FJ2- followed by "
             "64 hex chars for connector receipts such as Shopify order events) or by its 64-char "
             "sha256 receipt hash. Public and read-only: no API key, no side effects. Returns a "
-            "verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry). A VALID "
-            "verdict also carries `root`: the daily signed root covering the receipt and its "
+            "verdict: VALID, INVALID, or UNKNOWN (well-formed but not in the registry). VALID means "
+            "the record is intact and Frijolito issued it (signed integrity). FJ- receipts are "
+            "self-reported; FJ2- receipts come from a connector reporting an outside event. The "
+            "prefix alone does not prove independent observation: report what this receipt's own "
+            "fields show about its source and evidence, separately from the integrity check. A VALID verdict also carries `root`: the daily signed root covering the receipt and its "
             "inclusion proof, or root: null with a root_reason when the day is not rooted yet."
         ),
         "inputSchema": {
@@ -76,13 +80,17 @@ TOOLS = [
     },
     {
         "name": "notarize_moment",
-        "title": "Notarize a moment (mint a receipt)",
+        "title": "Record a moment (mint a self-reported receipt)",
         "description": (
-            "Witness a moment between parties and mint a signed, publicly verifiable Frijolito "
-            "receipt. WRITE: creates a permanent receipt record. No money moves. Requires an "
+            "Record a moment reported by the caller and mint a self-reported FJ- receipt signed by "
+            "Frijolito. It proves what was reported and when, not that it happened. WRITE: creates "
+            "a permanent receipt record; confirm with the user first. No money moves. Requires an "
             "API key with the notarize scope, set in the plugin's settings. Provide document_hash (preferred) or "
-            "document_text (hashed server-side, never stored). An idempotency_key is generated "
-            "if omitted and returned so a retry can reuse it without minting twice."
+            "document_text (hashed server-side, never stored). If idempotency_key is omitted, a new "
+            "one is generated for each call, so repeated calls without a key are NOT idempotent and "
+            "can mint separate receipts; a call that reuses the same key lets Frijolito replay the "
+            "original receipt. Never retry automatically: after a timeout or dropped connection the "
+            "outcome is unknown, and a new key can mint a second receipt."
         ),
         "inputSchema": {
             "type": "object",
@@ -97,7 +105,7 @@ TOOLS = [
                     },
                 },
                 "moment_label": {"type": "string", "description": "Short human label for what was agreed or happened."},
-                "witness_model": {"type": "string", "description": "Identity of the calling model/agent, recorded on the receipt."},
+                "witness_model": {"type": "string", "description": "Identity of the calling model/agent that recorded the moment (API field name)."},
                 "document_hash": {"type": "string", "pattern": SHA256_RE.pattern},
                 "document_text": {"type": "string"},
                 "evidence_pointers": {
@@ -113,11 +121,11 @@ TOOLS = [
                     },
                 },
                 "external_ref": {"type": "string", "description": "Caller's correlation id; echoed back."},
-                "idempotency_key": {"type": "string", "description": "Reuse on retry to replay instead of minting twice."},
+                "idempotency_key": {"type": "string", "description": "Optional. Reuse the same key to let Frijolito replay the original receipt. If omitted, a new key is generated for this call."},
             },
             "required": ["parties", "moment_label", "witness_model"],
         },
-        "annotations": {"readOnlyHint": False, "destructiveHint": False, "idempotentHint": True, "openWorldHint": True},
+        "annotations": {"readOnlyHint": False, "destructiveHint": False, "idempotentHint": False, "openWorldHint": True},
     },
 ]
 
@@ -191,12 +199,29 @@ def tool_notarize_moment(args):
               "document_text", "evidence_pointers", "external_ref")
     body = {k: args[k] for k in fields if args.get(k) not in (None, "", [])}
     idem = (args.get("idempotency_key") or "").strip() or str(uuid.uuid4())
-    status, data = _post("/functions/notarize_moment", body, {
-        "Authorization": "Bearer " + API_KEY,
-        "Idempotency-Key": idem,
-    })
+    try:
+        status, data = _post("/functions/notarize_moment", body, {
+            "Authorization": "Bearer " + API_KEY,
+            "Idempotency-Key": idem,
+        })
+    except (OSError, http.client.HTTPException) as e:
+        # Timeouts, dropped connections and cut-off replies. The request may
+        # have reached Frijolito, so a receipt may or may not exist. Hand back
+        # the key that was sent; never retry here.
+        return _result({"error": "OUTCOME_UNKNOWN", "outcome_unknown": True,
+                        "idempotency_key": idem,
+                        "detail": "No answer from Frijolito (%s). A receipt may or may not have been minted. "
+                                  "Do not retry automatically. If the user chooses to try again, reuse this "
+                                  "idempotency_key so Frijolito can replay the original receipt." % type(e).__name__}, True)
     payload = {"http_status": status, "idempotency_key": idem}
     payload.update(data if isinstance(data, dict) else {"body": data})
+    non_json = isinstance(data, dict) and data.get("error") == "NON_JSON_RESPONSE"
+    if status >= 500 or (non_json and status in (200, 201)):
+        payload["outcome_unknown"] = True
+        payload["idempotency_key"] = idem
+        payload["note"] = ("The outcome is unknown: a receipt may or may not have been minted. Do not retry "
+                           "automatically. If the user chooses to try again, reuse this idempotency_key.")
+        return _result(payload, True)
     return _result(payload, is_error=status not in (200, 201))
 
 

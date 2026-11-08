@@ -5,7 +5,7 @@
 <h1 align="center">Frijolito plugins for Claude</h1>
 
 <p align="center">
-  Official <a href="https://frijolito.app">Frijolito</a> plugins for Claude, Cowork, Claude Code, Gemini and Chrome.
+  <a href="https://frijolito.app">Frijolito</a> plugins for Claude Code, Gemini and Chrome.
 </p>
 
 ---
@@ -14,15 +14,13 @@
 
 | Plugin | What it does |
 |---|---|
-| [**frijolito-receipts**](plugins/frijolito-receipts) | Notarize moments and verify signed, tamper-evident receipts. Verification is free and needs no key. |
+| [**frijolito-receipts**](plugins/frijolito-receipts) | Claude Code. Verify Frijolito receipts for free, no key needed. Optionally record signed, self-reported receipts with an API key. |
 | [**Frijolito for Chrome**](chrome) | Ask Frijolito anything and verify a receipt from any page, in Chrome's side panel. |
 | [**frijolito** for Gemini](#gemini) | Verify receipts, read your Frijolito context, and file or follow requests with the team, from Gemini CLI. |
 
 ## Install
 
-From the Claude plugin directory, search for **Frijolito Receipts**.
-
-Or add this repository as a marketplace in Claude Code:
+Add this repository as a marketplace in Claude Code:
 
 ```
 /plugin marketplace add slyaidevelop/frijolito-plugins
