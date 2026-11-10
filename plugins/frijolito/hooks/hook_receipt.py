@@ -7,8 +7,8 @@ Usage: hook_receipt.py gate|result   (the hook event JSON arrives on stdin)
   result  PostToolUse, PostToolUseFailure   -> POST {BASE}/functions/hookResult
 
 Off unless a hook receipt key is set in the plugin's settings (exported by
-Claude Code as CLAUDE_PLUGIN_OPTION_HOOK_KEY). Without a key nothing is read
-past stdin and nothing is sent.
+Claude Code as CLAUDE_PLUGIN_OPTION_HOOK_KEY). Without a key nothing is sent.
+The key comes only from that setting, and it only ever goes to frijolito.app.
 
 This script never blocks a tool call: it always exits 0, never prints a
 permission decision, and stays silent on any error. Frijolito stores hashes
@@ -21,24 +21,18 @@ import sys
 import urllib.error
 import urllib.request
 
-BASE_URL = os.environ.get("FRIJOLITO_HOOK_BASE_URL", "https://frijolito.app").rstrip("/")
+BASE_URL = "https://frijolito.app"
 ENDPOINTS = {"gate": "/functions/hookGate", "result": "/functions/hookResult"}
 TIMEOUT_SECONDS = 5
 USER_AGENT = "frijolito-hook-receipts/0.6.0"
 
 
 def hook_key():
-    for name in ("CLAUDE_PLUGIN_OPTION_HOOK_KEY", "FRIJOLITO_HOOK_KEY"):
-        value = os.environ.get(name, "").strip()
-        # An unset option can arrive as an unexpanded placeholder.
-        if value and not value.startswith("${"):
-            return value
-    return ""
-
-
-def base_url_ok(url):
-    """The key only ever goes over https, or to this machine for tests."""
-    return url.startswith("https://") or url.startswith(("http://127.0.0.1:", "http://localhost:"))
+    value = os.environ.get("CLAUDE_PLUGIN_OPTION_HOOK_KEY", "").strip()
+    # An unset option can arrive as an unexpanded placeholder.
+    if not value or value.startswith("${"):
+        return ""
+    return value
 
 
 def gate_output(body):
@@ -55,7 +49,7 @@ def gate_output(body):
 def main(argv):
     mode = argv[1] if len(argv) > 1 else ""
     key = hook_key()
-    if mode not in ENDPOINTS or not key or not base_url_ok(BASE_URL):
+    if mode not in ENDPOINTS or not key:
         return 0
     try:
         event = sys.stdin.buffer.read()

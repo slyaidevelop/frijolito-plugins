@@ -1,16 +1,8 @@
-<p align="center">
-  <img src="assets/icon.png" alt="Frijolito" width="120">
-</p>
+# Frijolito
 
-<h1 align="center">Frijolito</h1>
+Ask Frijolito, follow your requests, and verify signed receipts from Claude Code.
 
-<p align="center">
-  Ask Frijolito, follow your requests, and verify signed receipts from Claude Code.
-</p>
-
-<p align="center">
-  <img src="assets/listing/1-ask.png" alt="Asking Frijolito from Claude Code" width="720">
-</p>
+![Asking Frijolito from Claude Code](assets/listing/1-ask.png)
 
 ---
 
@@ -49,6 +41,8 @@ There are two kinds of receipt, and they prove different things:
 - **`FJ-` receipts** are self-reported. The caller tells Frijolito what happened and Frijolito signs that record. A valid `FJ-` receipt proves what was reported, by whom and when, and that it hasn't been changed since. It does not prove that the event happened or that its claims are true.
 - **`FJ2-` receipts** come from a connector that reports an outside event, such as a Shopify order event, instead of from the caller. The prefix alone doesn't prove independent observation: Claude reports what each receipt's own evidence says about its source, separately from whether its signature checks out.
 
+![Verifying a receipt in one line](assets/listing/2-verify.png)
+
 A VALID verdict means the record is intact and Frijolito issued it. It also says whether the receipt is sealed in a daily root anchored in Bitcoin.
 
 This plugin is for **Claude Code**. Receipts run through a small local Python server on your computer, so the plugin is not proven to run in Claude on the web (claude.ai), and it hasn't been tested in Cowork.
@@ -64,6 +58,8 @@ With a hook receipt key, each Bash, Edit, Write and MCP call Claude Code makes o
 - **Cost.** Each matched call waits on one short request to Frijolito, usually under a second.
 
 Hook keys are in limited release. Ask **concierge@frijolito.app** for a test key (`fjh_test_…`), then run `/plugin`, open **Frijolito**, choose **Configure** and paste it into **Hook receipt key**. Clear the field to turn hook receipts off.
+
+The images on this page are illustrations. The receipt they show is a real demo receipt that anyone can verify.
 
 ## Safety by design
 

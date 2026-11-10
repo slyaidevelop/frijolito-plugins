@@ -97,6 +97,22 @@ class WordingTest(unittest.TestCase):
             self.assertIn("never blocks", t, doc)
         self.assertIn("off by default", read(PLUGIN, "README.md").lower())
 
+    def test_directory_rules(self):
+        """Things Anthropic's directory checks hold or block a plugin for."""
+        readme = read(PLUGIN, "README.md")
+        self.assertNotIn("<img", readme)
+        self.assertIn("](assets/listing/1-ask.png)", readme)
+        for root, _dirs, files in os.walk(PLUGIN):
+            for name in files:
+                path = os.path.join(root, name)
+                self.assertNotIn(name, (".DS_Store", "Thumbs.db", "desktop.ini"), path)
+                if name.endswith((".md", ".json", ".py")):
+                    self.assertIsNone(re.search(r"`[^`\n]*\.(png|svg|jpg|jpeg|gif|webp)`", read(path)), path)
+                if not name.endswith((".png", ".svg")):
+                    self.assertLess(os.path.getsize(path), 256 * 1024, path)
+        self.assertGreaterEqual(len(re.sub(r"```.*?```", "", readme, flags=re.S).split()), 40)
+        self.assertTrue(os.path.isfile(os.path.join(PLUGIN, "LICENSE")))
+
     def test_no_generated_files_are_tracked(self):
         self.assertIn("__pycache__/", read(REPO, ".gitignore"))
 

@@ -1,7 +1,10 @@
-// Renders listing.html into the three listing images. Run: node render.cjs (needs Playwright).
+// Renders listing.html into the three images the plugin README shows.
+// Run: node design/claude-listing/render.cjs (needs Playwright).
 const { chromium } = require('playwright');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
+
+const OUT = path.join(__dirname, '..', '..', 'plugins', 'frijolito', 'assets', 'listing');
 
 (async () => {
   const src = pathToFileURL(path.join(__dirname, 'listing.html')).href;
@@ -13,7 +16,7 @@ const { pathToFileURL } = require('node:url');
     await page.evaluate(() => document.fonts.ready);
     const loaded = await page.evaluate(() => ['Playfair Display', 'Inter', 'JetBrains Mono'].map((f) => document.fonts.check(`16px "${f}"`)));
     if (loaded.includes(false)) throw new Error(`A listing font did not load: ${loaded}`);
-    await page.screenshot({ path: path.join(__dirname, `${n + 1}-${scenes[n]}.png`) });
+    await page.screenshot({ path: path.join(OUT, `${n + 1}-${scenes[n]}.png`) });
   }
   await browser.close();
 })();
