@@ -1,7 +1,7 @@
 {
   "name": "frijolito",
   "displayName": "Frijolito",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Ask Frijolito, file and follow requests with the team, and verify signed receipts. Verifying needs no account and no key.",
   "author": {
     "name": "Frijolito",
@@ -17,32 +17,11 @@
     "receipts",
     "notary",
     "verification",
-    "proof",
-    "hooks"
+    "proof"
   ],
   "icon": "./assets/icon.png",
   "documentationUrl": "https://github.com/slyaidevelop/frijolito-plugins/blob/main/plugins/frijolito/README.md",
   "supportUrl": "https://frijolito.app",
   "privacyPolicyUrl": "https://frijolito.app/privacy",
-  "termsOfServiceUrl": "https://frijolito.app/terms",
-  "userConfig": {
-    "api_key": {
-      "type": "string",
-      "title": "Receipt API key",
-      "description": "Optional. Only needed to notarize. Asking, requests and verifying work without it. Request one from concierge@frijolito.app (fj_test_… or fj_live_…).",
-      "sensitive": true
-    },
-    "allow_live": {
-      "type": "boolean",
-      "title": "Allow production receipts",
-      "description": "Turn on to let an fj_live_ key mint production receipts. Leave off while testing.",
-      "default": false
-    },
-    "hook_key": {
-      "type": "string",
-      "title": "Hook receipt key",
-      "description": "Optional. Leave empty to keep hook receipts off. With a key (fjh_test_… or fjh_live_…), each Bash, Edit, Write and MCP call in Claude Code leaves a signed, self-reported receipt. Frijolito keeps hashes and a one-line summary, not the call's input or result.",
-      "sensitive": true
-    }
-  }
+  "termsOfServiceUrl": "https://frijolito.app/terms"
 }

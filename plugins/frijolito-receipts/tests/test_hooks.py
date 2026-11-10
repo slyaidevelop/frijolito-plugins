@@ -1,6 +1,6 @@
 """Hook receipts: off without a key, never block, never relay a decision.
 Uses a local HTTP server in place of frijolito.app. No outside network.
-Run: python3 -m unittest discover -s plugins/frijolito/tests
+Run: python3 -m unittest discover -s plugins/frijolito-receipts/tests
 """
 import json
 import os

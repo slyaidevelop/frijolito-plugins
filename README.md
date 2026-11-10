@@ -14,7 +14,8 @@
 
 | Plugin | What it does |
 |---|---|
-| [**Frijolito**](plugins/frijolito) | Claude Code. Ask Frijolito, file and follow requests with the team, and verify signed receipts. Verifying needs no account and no key. |
+| [**Frijolito**](plugins/frijolito) | Claude. Ask Frijolito, file and follow requests with the team, and verify signed receipts. Nothing runs on your computer, and verifying needs no account and no key. |
+| [**Frijolito Receipts**](plugins/frijolito-receipts) | Claude Code, for developers. Record signed, self-reported receipts with an API key, and optionally leave a receipt for each tool call. Runs a small local program. |
 | [**Frijolito for Chrome**](chrome) | Ask Frijolito anything and verify a receipt from any page, in Chrome's side panel. |
 | [**frijolito** for Gemini](#gemini) | Verify receipts, read your Frijolito context, and file or follow requests with the team, from Gemini CLI. |
 
@@ -35,7 +36,7 @@ On older versions, run `/plugin marketplace add slyaidevelop/frijolito-plugins`,
 | `/frijolito:status` | Your requests and open projects |
 | `/frijolito:verify` | Check a receipt by ID or hash, no account needed |
 
-The plugin was called `frijolito-receipts` before 0.6.0. Existing installs move to `frijolito` on their next sync; the receipt API key may need to be entered again. See the [plugin README](plugins/frijolito/README.md) for sign-in, keys, hook receipts and data handling.
+See the [plugin README](plugins/frijolito/README.md) for sign-in and data handling, and [Frijolito Receipts](plugins/frijolito-receipts/README.md) for recording receipts and hook receipts.
 
 ## Gemini
 

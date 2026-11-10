@@ -10,10 +10,13 @@
       "name": "frijolito",
       "source": "./plugins/frijolito",
       "description": "Ask Frijolito, file and follow requests with the team, and verify signed receipts. Verifying needs no account and no key.",
+      "version": "0.7.0"
+    },
+    {
+      "name": "frijolito-receipts",
+      "source": "./plugins/frijolito-receipts",
+      "description": "For developers, in Claude Code. Record signed, self-reported receipts with an API key, verify receipts locally, and optionally leave a receipt for each tool call.",
       "version": "0.6.0"
     }
-  ],
-  "renames": {
-    "frijolito-receipts": "frijolito"
-  }
+  ]
 }

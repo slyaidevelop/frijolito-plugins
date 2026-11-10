@@ -52,7 +52,11 @@ Minting is permanent, so:
 
 ## Errors
 
-- `NOT_CONFIGURED`: no API key is set. Verifying still works. To notarize, the user requests a key from concierge@frijolito.app, adds it in the plugin's settings (`/plugin` → Frijolito → Configure), and restarts Claude.
+- `NOT_CONFIGURED`: no API key is set. Verifying still works. To notarize, the user requests a key from concierge@frijolito.app, adds it in the plugin's settings (`/plugin` → Frijolito Receipts → Configure), and restarts Claude.
 - `LIVE_KEY_BLOCKED`: a production key is set. Minting production receipts needs the plugin's "Allow production receipts" setting turned on; confirm with the user first.
 - `401 UNAUTHORIZED`: the key is missing, revoked, or lacks the `notarize` scope.
 - `422 UNPROCESSABLE`: a semantic rule failed, or an idempotency key was reused with a different payload. Quote `detail`; do not loop.
+
+## Hook receipts (optional, off by default)
+
+With a hook receipt key in the plugin's settings, each Bash, Edit, Write and MCP call in Claude Code opens a Frijolito receipt (`FJ-HK-…`) and closes it with the result's hash. Claude Code's hook event for the call is sent; Frijolito keeps hashes and a one-line redacted summary, not the input or the result. These receipts are self-reported: Claude Code describes the call and Frijolito signs that description. Nothing witnesses the call from outside, and Frijolito never blocks or changes a call. Without a key, nothing is sent. To turn them off, clear the key in `/plugin` → Frijolito Receipts → Configure.
