@@ -29,7 +29,7 @@ Frijolito keeps signed receipts, not payments. No money moves through this plugi
 
 ## Images
 
-1600 × 1000, in `assets/listing/`. They are illustrations with sample data, and each one says so.
+1600 × 1000, in `assets/listing/`. They are illustrations, and each one says so. The receipt shown is a real demo receipt, `FJ-20261014-001-f4094fcae7d7`, with its own parties, label and date, so anyone can verify it.
 
 1. `1-ask.png`: Ask Frijolito, right where you work.
 2. `2-verify.png`: Check any receipt in one line.

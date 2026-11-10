@@ -93,6 +93,12 @@ class HookTest(unittest.TestCase):
         done = self.run_hook("nonsense")
         self.assertEqual((done.returncode, done.stdout), (0, b""))
 
+    def test_key_is_not_sent_over_plain_http_to_another_host(self):
+        for base in ("http://example.invalid", "ftp://127.0.0.1", self.base.replace("127.0.0.1", "0.0.0.0")):
+            done = self.run_hook("gate", base=base)
+            self.assertEqual((done.returncode, done.stdout, done.stderr), (0, b"", b""), base)
+        self.assertEqual(Handler.calls, [])
+
     def test_key_never_appears_in_output(self):
         Handler.reply = (401, "bad key fjh_test_abc")
         done = self.run_hook("gate")

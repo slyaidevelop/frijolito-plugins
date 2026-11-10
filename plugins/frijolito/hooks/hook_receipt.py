@@ -36,6 +36,11 @@ def hook_key():
     return ""
 
 
+def base_url_ok(url):
+    """The key only ever goes over https, or to this machine for tests."""
+    return url.startswith("https://") or url.startswith(("http://127.0.0.1:", "http://localhost:"))
+
+
 def gate_output(body):
     """Pass on only the receipt note. A permission decision is never relayed."""
     try:
@@ -50,7 +55,7 @@ def gate_output(body):
 def main(argv):
     mode = argv[1] if len(argv) > 1 else ""
     key = hook_key()
-    if mode not in ENDPOINTS or not key:
+    if mode not in ENDPOINTS or not key or not base_url_ok(BASE_URL):
         return 0
     try:
         event = sys.stdin.buffer.read()
