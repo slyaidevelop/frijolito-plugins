@@ -22,15 +22,6 @@
   .say { font-family:Inter,system-ui,sans-serif; font-size:24px; line-height:1.55; color:rgba(247,243,236,.9); }
   .ok { display:inline-flex; align-items:center; gap:14px; font-size:25px; letter-spacing:.08em; }
   .ok i { width:12px; height:12px; border-radius:50%; background:var(--orange); display:inline-block; }
-  .card { background:#fff; border:1px solid var(--line); border-radius:28px; padding:52px 56px; min-height:560px; display:flex; flex-direction:column; justify-content:center; }
-  .card h2 { font-family:"Playfair Display",Georgia,serif; font-weight:400; font-size:40px; letter-spacing:-.01em; }
-  .card .id { margin-top:10px; font-family:"JetBrains Mono",monospace; font-size:19px; color:var(--soft); }
-  .rows { margin-top:36px; border-top:1px solid var(--line); }
-  .row { display:flex; justify-content:space-between; gap:24px; padding:20px 0; border-bottom:1px solid var(--line); font-size:22px; }
-  .row span:first-child { color:var(--soft); }
-  .row span:last-child { text-align:right; }
-  .seal { margin-top:34px; display:flex; align-items:center; gap:14px; font-size:20px; letter-spacing:.1em; }
-  .seal i { width:12px; height:12px; border-radius:50%; background:var(--orange); }
 </style>
 </head>
 <body>
@@ -70,25 +61,6 @@
   <p class="note">Illustration, using a real demo receipt.</p>
 </section>
 
-<section class="scene" id="receipt">
-  <div>
-    <svg class="mark" viewBox="0 0 64 64"><use href="#bean"/></svg>
-    <h1>Signed receipts, not payments.</h1>
-    <p class="sub">Record a moment when you choose to. Nothing is minted without your yes.</p>
-  </div>
-  <div class="card">
-    <h2>Claude plugin end-to-end test</h2>
-    <div class="id">FJ-20261014-001-f4094fcae7d7</div>
-    <div class="rows">
-      <div class="row"><span>Parties</span><span>Frijolito · Claude plugin test</span></div>
-      <div class="row"><span>Recorded</span><span>14 Oct 2026</span></div>
-      <div class="row"><span>Kind</span><span>Self-reported, demo</span></div>
-      <div class="row"><span>Daily root</span><span>Sealed</span></div>
-    </div>
-    <div class="seal"><i></i>VALID</div>
-  </div>
-  <p class="note">Illustration, using a real demo receipt.</p>
-</section>
 <script>document.getElementById(new URLSearchParams(location.search).get('s')||'ask').classList.add('on')</script>
 </body>
 </html>

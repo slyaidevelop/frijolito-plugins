@@ -1,4 +1,4 @@
-// Renders listing.html into the three images the plugin README shows.
+// Renders listing.html into the two images the plugin README shows.
 // Run: node design/claude-listing/render.cjs (needs Playwright).
 const { chromium } = require('playwright');
 const path = require('node:path');
@@ -10,7 +10,7 @@ const OUT = path.join(__dirname, '..', '..', 'plugins', 'frijolito', 'assets', '
   const src = pathToFileURL(path.join(__dirname, 'listing.html')).href;
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
-  const scenes = ['ask', 'verify', 'receipt'];
+  const scenes = ['ask', 'verify'];
   for (let n = 0; n < scenes.length; n += 1) {
     await page.goto(`${src}?s=${scenes[n]}`, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.fonts.ready);

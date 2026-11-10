@@ -1,6 +1,6 @@
 """Offline tests for notarizations whose outcome is unknown. No network:
 _post is replaced with a stub that records each call.
-Run: python3 -m unittest discover -s plugins/frijolito/tests
+Run: python3 -m unittest discover -s plugins/frijolito-receipts/tests
 """
 import http.client
 import os

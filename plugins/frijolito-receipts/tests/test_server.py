@@ -1,5 +1,5 @@
 """Offline tests for the MCP server: no network, the HTTP call is stubbed.
-Run: python3 -m unittest discover -s plugins/frijolito/tests
+Run: python3 -m unittest discover -s plugins/frijolito-receipts/tests
 """
 import importlib.util
 import json
