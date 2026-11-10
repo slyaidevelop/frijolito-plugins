@@ -1,0 +1,94 @@
+<!doctype html>
+<!-- Source for the listing images. Render: node render.cjs (needs Playwright). Illustrations, not captures of a live session. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Frijolito listing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root { --ivory:#F7F3EC; --ink:#171614; --orange:#FB7421; --soft:rgba(23,22,20,.56); --line:rgba(23,22,20,.12); }
+  * { box-sizing:border-box; margin:0; }
+  body { width:1600px; height:1000px; background:var(--ivory); color:var(--ink); font-family:Inter,system-ui,sans-serif; overflow:hidden; }
+  .scene { display:none; width:1600px; height:1000px; padding:96px 104px; grid-template-columns:560px 1fr; gap:88px; align-items:center; }
+  .scene.on { display:grid; }
+  .mark { position:absolute; left:100px; top:72px; width:64px; height:64px; }
+  h1 { font-family:"Playfair Display",Georgia,serif; font-weight:400; font-size:76px; line-height:1.04; letter-spacing:-.02em; }
+  p.sub { margin-top:28px; font-size:25px; line-height:1.5; color:var(--soft); max-width:480px; }
+  p.note { position:absolute; left:104px; bottom:56px; font-size:15px; color:var(--soft); letter-spacing:.01em; }
+  .term { background:var(--ink); color:var(--ivory); border-radius:28px; padding:48px 52px; font-family:"JetBrains Mono",ui-monospace,monospace; font-size:23px; line-height:1.7; min-height:560px; display:flex; flex-direction:column; justify-content:center; gap:26px; }
+  .cmd { color:var(--ivory); }
+  .cmd b { color:var(--orange); font-weight:500; }
+  .dim { color:rgba(247,243,236,.55); }
+  .say { font-family:Inter,system-ui,sans-serif; font-size:24px; line-height:1.55; color:rgba(247,243,236,.9); }
+  .ok { display:inline-flex; align-items:center; gap:14px; font-size:25px; letter-spacing:.08em; }
+  .ok i { width:12px; height:12px; border-radius:50%; background:var(--orange); display:inline-block; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:28px; padding:52px 56px; min-height:560px; display:flex; flex-direction:column; justify-content:center; }
+  .card h2 { font-family:"Playfair Display",Georgia,serif; font-weight:400; font-size:40px; letter-spacing:-.01em; }
+  .card .id { margin-top:10px; font-family:"JetBrains Mono",monospace; font-size:19px; color:var(--soft); }
+  .rows { margin-top:36px; border-top:1px solid var(--line); }
+  .row { display:flex; justify-content:space-between; gap:24px; padding:20px 0; border-bottom:1px solid var(--line); font-size:22px; }
+  .row span:first-child { color:var(--soft); }
+  .row span:last-child { text-align:right; }
+  .seal { margin-top:34px; display:flex; align-items:center; gap:14px; font-size:20px; letter-spacing:.1em; }
+  .seal i { width:12px; height:12px; border-radius:50%; background:var(--orange); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <g id="bean" fill="none" stroke="#171614" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="2.6" d="M49.3 48C52 43 52.5 38 52.3 33C52 22 47.5 14 44 11C40.5 8.5 36.5 8 33.1 8C24 8 17.5 15 16.3 22.9C15.5 28 14.5 31 12.5 34.5C10.5 38 10.4 42 11 45C12.5 52 20 58 30 58C35 58 39 56.5 42.4 54.1"/>
+    <path stroke-width="3.3" d="M24.3 29.6v2.9"/><path stroke-width="3.3" d="M42.4 29.6v2.9"/>
+    <path stroke-width="2.6" d="M29.1 35.7Q33.2 39.5 37.3 35.7"/>
+    <circle cx="46.3" cy="52" r="2.1" fill="#FB7421" stroke="none"/>
+  </g></defs></svg>
+
+<section class="scene" id="ask">
+  <div>
+    <svg class="mark" viewBox="0 0 64 64"><use href="#bean"/></svg>
+    <h1>Ask Frijolito, right where you work.</h1>
+    <p class="sub">One command. Sign in once in your browser. No key.</p>
+  </div>
+  <div class="term">
+    <div class="cmd"><b>/frijolito:ask</b> what's waiting on me this week?</div>
+    <div class="say">Two things. Your homepage copy needs a yes, and the store connection is ready to test. Want me to open either one?</div>
+    <div class="dim">/frijolito:request &nbsp; /frijolito:status</div>
+  </div>
+  <p class="note">Illustration.</p>
+</section>
+
+<section class="scene" id="verify">
+  <div>
+    <svg class="mark" viewBox="0 0 64 64"><use href="#bean"/></svg>
+    <h1>Check any receipt in one line.</h1>
+    <p class="sub">Free. No account, no key. A plain verdict, and what it does and doesn't prove.</p>
+  </div>
+  <div class="term">
+    <div class="cmd"><b>/frijolito:verify</b> FJ-20261014-001-f4094fcae7d7</div>
+    <div class="ok"><i></i>VALID</div>
+    <div class="say">The record is intact and Frijolito issued it. It is self-reported: it proves what was recorded, by whom and when.</div>
+  </div>
+  <p class="note">Illustration. Sample receipt ID.</p>
+</section>
+
+<section class="scene" id="receipt">
+  <div>
+    <svg class="mark" viewBox="0 0 64 64"><use href="#bean"/></svg>
+    <h1>Signed receipts, not payments.</h1>
+    <p class="sub">Record a moment when you choose to. Nothing is minted without your yes.</p>
+  </div>
+  <div class="card">
+    <h2>Terms agreed</h2>
+    <div class="id">FJ-20261014-001-f4094fcae7d7</div>
+    <div class="rows">
+      <div class="row"><span>Parties</span><span>Acme · Beta</span></div>
+      <div class="row"><span>Recorded</span><span>14 Oct 2026</span></div>
+      <div class="row"><span>Kind</span><span>Self-reported</span></div>
+      <div class="row"><span>Daily root</span><span>Sealed</span></div>
+    </div>
+    <div class="seal"><i></i>VALID</div>
+  </div>
+  <p class="note">Illustration. Sample receipt.</p>
+</section>
+<script>document.getElementById(new URLSearchParams(location.search).get('s')||'ask').classList.add('on')</script>
+</body>
+</html>

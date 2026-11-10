@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="plugins/frijolito-receipts/assets/logo.png" alt="Frijolito logo" width="140">
+  <img src="plugins/frijolito/assets/icon.png" alt="Frijolito" width="120">
 </p>
 
 <h1 align="center">Frijolito plugins for Claude</h1>
@@ -14,20 +14,28 @@
 
 | Plugin | What it does |
 |---|---|
-| [**frijolito-receipts**](plugins/frijolito-receipts) | Claude Code. Verify Frijolito receipts for free, no key needed. Optionally record signed, self-reported receipts with an API key. |
+| [**Frijolito**](plugins/frijolito) | Claude Code. Ask Frijolito, file and follow requests with the team, and verify signed receipts. Verifying needs no account and no key. |
 | [**Frijolito for Chrome**](chrome) | Ask Frijolito anything and verify a receipt from any page, in Chrome's side panel. |
 | [**frijolito** for Gemini](#gemini) | Verify receipts, read your Frijolito context, and file or follow requests with the team, from Gemini CLI. |
 
 ## Install
 
-Add this repository as a marketplace in Claude Code:
+In Claude Code:
 
 ```
-/plugin marketplace add slyaidevelop/frijolito-plugins
-/plugin install frijolito-receipts@frijolito
+/plugin install frijolito --marketplace slyaidevelop/frijolito-plugins
 ```
 
-See the [plugin README](plugins/frijolito-receipts/README.md) for API keys, settings and data handling.
+On older versions, run `/plugin marketplace add slyaidevelop/frijolito-plugins`, then `/plugin install frijolito@frijolito`.
+
+| Command | What it does |
+|---|---|
+| `/frijolito:ask` | Talk to Frijolito, the concierge |
+| `/frijolito:request` | File a request with the team (asks before sending) |
+| `/frijolito:status` | Your requests and open projects |
+| `/frijolito:verify` | Check a receipt by ID or hash, no account needed |
+
+The plugin was called `frijolito-receipts` before 0.6.0. Existing installs move to `frijolito` on their next sync; the receipt API key may need to be entered again. See the [plugin README](plugins/frijolito/README.md) for sign-in, keys, hook receipts and data handling.
 
 ## Gemini
 

@@ -1,0 +1,14 @@
+{
+  "description": "Hook receipts, off until a hook receipt key is set. Each matched tool call opens a signed, self-reported Frijolito receipt and closes it with the result's hash. Never blocks or changes a call.",
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash|Edit|Write|mcp__.*", "hooks": [{ "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/hook_receipt.py\" gate", "timeout": 8 }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Bash|Edit|Write|mcp__.*", "hooks": [{ "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/hook_receipt.py\" result", "timeout": 8 }] }
+    ],
+    "PostToolUseFailure": [
+      { "matcher": "Bash|Edit|Write|mcp__.*", "hooks": [{ "type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/hook_receipt.py\" result", "timeout": 8 }] }
+    ]
+  }
+}
