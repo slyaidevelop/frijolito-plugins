@@ -1,8 +1,14 @@
 {
   "mcpServers": {
+    "frijolito": {
+      "type": "http",
+      "url": "https://frijolito.app/api/mcp"
+    },
     "frijolito-receipts": {
       "command": "python3",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/server/frijolito_receipts_mcp.py"],
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/server/frijolito_receipts_mcp.py"
+      ],
       "env": {
         "FRIJOLITO_API_KEY": "${user_config.api_key}",
         "FRIJOLITO_ALLOW_LIVE": "${user_config.allow_live}"

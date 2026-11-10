@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Frijolito">
+  <!-- The official Frijolito mark (frijolito/src/lib/beanPaths.js), ivory on an ink tile. -->
+  <rect width="512" height="512" rx="104" fill="#171614"/>
+  <g transform="translate(256 256) scale(5.4) translate(-31.5 -33)" fill="none" stroke="#F7F3EC" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="2.6" d="M49.3 48C52 43 52.5 38 52.3 33C52 22 47.5 14 44 11C40.5 8.5 36.5 8 33.1 8C24 8 17.5 15 16.3 22.9C15.5 28 14.5 31 12.5 34.5C10.5 38 10.4 42 11 45C12.5 52 20 58 30 58C35 58 39 56.5 42.4 54.1"/>
+    <path stroke-width="3.3" d="M24.3 29.6v2.9"/>
+    <path stroke-width="3.3" d="M42.4 29.6v2.9"/>
+    <path stroke-width="2.6" d="M29.1 35.7Q33.2 39.5 37.3 35.7"/>
+    <circle cx="46.3" cy="52" r="2.1" fill="#FB7421" stroke="none"/>
+  </g>
+</svg>

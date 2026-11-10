@@ -52,7 +52,7 @@ Minting is permanent, so:
 
 ## Errors
 
-- `NOT_CONFIGURED`: no API key is set. Verifying still works. To notarize, the user requests a key from concierge@frijolito.app, adds it in the plugin's settings (`/plugin` → Frijolito Receipts → Configure), and restarts Claude.
+- `NOT_CONFIGURED`: no API key is set. Verifying still works. To notarize, the user requests a key from concierge@frijolito.app, adds it in the plugin's settings (`/plugin` → Frijolito → Configure), and restarts Claude.
 - `LIVE_KEY_BLOCKED`: a production key is set. Minting production receipts needs the plugin's "Allow production receipts" setting turned on; confirm with the user first.
 - `401 UNAUTHORIZED`: the key is missing, revoked, or lacks the `notarize` scope.
 - `422 UNPROCESSABLE`: a semantic rule failed, or an idempotency key was reused with a different payload. Quote `detail`; do not loop.

@@ -1,5 +1,5 @@
 """Offline checks on the package text and metadata. No network.
-Run: python3 -m unittest discover -s plugins/frijolito-receipts/tests
+Run: python3 -m unittest discover -s plugins/frijolito/tests
 """
 import json
 import os
@@ -19,23 +19,31 @@ class VersionTest(unittest.TestCase):
     def test_versions_agree(self):
         manifest = json.loads(read(PLUGIN, ".claude-plugin", "plugin.json"))
         market = json.loads(read(REPO, ".claude-plugin", "marketplace.json"))
-        entry = next(p for p in market["plugins"] if p["name"] == "frijolito-receipts")
+        entry = next(p for p in market["plugins"] if p["name"] == "frijolito")
         server = re.search(r'SERVER_VERSION = "([^"]+)"', read(PLUGIN, "server", "frijolito_receipts_mcp.py")).group(1)
-        self.assertEqual(manifest["version"], "0.5.0")
+        self.assertEqual(manifest["version"], "0.6.0")
         self.assertEqual(entry["version"], manifest["version"])
         self.assertEqual(server, manifest["version"])
 
-    def test_identity_is_unchanged(self):
+    def test_identity(self):
         manifest = json.loads(read(PLUGIN, ".claude-plugin", "plugin.json"))
-        self.assertEqual(manifest["name"], "frijolito-receipts")
-        self.assertEqual(json.loads(read(REPO, ".claude-plugin", "marketplace.json"))["name"], "frijolito")
+        market = json.loads(read(REPO, ".claude-plugin", "marketplace.json"))
+        self.assertEqual(manifest["name"], "frijolito")
+        self.assertEqual(manifest["displayName"], "Frijolito")
+        self.assertEqual(market["name"], "frijolito")
+        # Installs made under the old slug move over on their next sync.
+        self.assertEqual(market["renames"], {"frijolito-receipts": "frijolito"})
+        self.assertTrue(manifest["userConfig"]["hook_key"]["sensitive"])
+        self.assertNotIn("default", manifest["userConfig"]["hook_key"])
+        self.assertTrue(os.path.isfile(os.path.join(PLUGIN, manifest["icon"])))
         self.assertTrue(manifest["userConfig"]["api_key"]["sensitive"])
         self.assertFalse(manifest["userConfig"]["allow_live"]["default"])
 
 
 class WordingTest(unittest.TestCase):
     DOCS = [("README.md",), ("skills", "frijolito-receipts", "SKILL.md"), ("commands", "notarize.md"),
-            ("commands", "verify-receipt.md")]
+            ("commands", "verify.md"), ("commands", "ask.md"), ("commands", "request.md"),
+            ("commands", "status.md"), ("skills", "frijolito", "SKILL.md")]
 
     def text(self):
         return "\n".join(read(PLUGIN, *d) for d in self.DOCS) + read(PLUGIN, "server", "frijolito_receipts_mcp.py")
@@ -71,6 +79,39 @@ class WordingTest(unittest.TestCase):
         skill = read(PLUGIN, "skills", "frijolito-receipts", "SKILL.md")
         self.assertIn("Never retry on your own", skill)
         self.assertIn("Never say a retry is safe", skill)
+
+    def test_servers_and_commands(self):
+        servers = json.loads(read(PLUGIN, ".mcp.json"))["mcpServers"]
+        self.assertEqual(servers["frijolito"], {"type": "http", "url": "https://frijolito.app/api/mcp"})
+        self.assertIn("frijolito-receipts", servers)
+        for name in ("ask", "request", "status", "verify", "notarize"):
+            self.assertTrue(os.path.isfile(os.path.join(PLUGIN, "commands", name + ".md")), name)
+        # Writes are confirmed first, and verifying stays on the server that needs no sign-in.
+        self.assertIn("wait for a clear yes", read(PLUGIN, "commands", "request.md"))
+        self.assertIn("`verify_receipt`", read(PLUGIN, "commands", "verify.md"))
+
+    def test_hook_receipts_are_described_as_self_reported_and_off_by_default(self):
+        for doc in (("README.md",), ("skills", "frijolito", "SKILL.md")):
+            t = read(PLUGIN, *doc)
+            self.assertIn("self-reported", t, doc)
+            self.assertIn("never blocks", t, doc)
+        self.assertIn("off by default", read(PLUGIN, "README.md").lower())
+
+    def test_directory_rules(self):
+        """Things Anthropic's directory checks hold or block a plugin for."""
+        readme = read(PLUGIN, "README.md")
+        self.assertNotIn("<img", readme)
+        self.assertIn("](assets/listing/1-ask.png)", readme)
+        for root, _dirs, files in os.walk(PLUGIN):
+            for name in files:
+                path = os.path.join(root, name)
+                self.assertNotIn(name, (".DS_Store", "Thumbs.db", "desktop.ini"), path)
+                if name.endswith((".md", ".json", ".py")):
+                    self.assertIsNone(re.search(r"`[^`\n]*\.(png|svg|jpg|jpeg|gif|webp)`", read(path)), path)
+                if not name.endswith((".png", ".svg")):
+                    self.assertLess(os.path.getsize(path), 256 * 1024, path)
+        self.assertGreaterEqual(len(re.sub(r"```.*?```", "", readme, flags=re.S).split()), 40)
+        self.assertTrue(os.path.isfile(os.path.join(PLUGIN, "LICENSE")))
 
     def test_no_generated_files_are_tracked(self):
         self.assertIn("__pycache__/", read(REPO, ".gitignore"))

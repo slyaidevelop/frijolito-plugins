@@ -1,5 +1,5 @@
 """Offline tests for the MCP server: no network, the HTTP call is stubbed.
-Run: python3 -m unittest discover -s plugins/frijolito-receipts/tests
+Run: python3 -m unittest discover -s plugins/frijolito/tests
 """
 import importlib.util
 import json
@@ -105,7 +105,7 @@ class StdioProtocolTest(unittest.TestCase):
             server.handle({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}})
         finally:
             server._send = real
-        self.assertEqual(sent[0]["result"]["serverInfo"]["version"], "0.5.0")
+        self.assertEqual(sent[0]["result"]["serverInfo"]["version"], "0.6.0")
 
 
 if __name__ == "__main__":

@@ -25,7 +25,7 @@ import urllib.error
 import urllib.request
 
 SERVER_NAME = "frijolito-receipts"
-SERVER_VERSION = "0.5.0"
+SERVER_VERSION = "0.6.0"
 DEFAULT_PROTOCOL = "2025-06-18"
 
 BASE_URL = "https://frijolito.app"
@@ -188,7 +188,7 @@ def tool_verify_receipt(args):
 def tool_notarize_moment(args):
     if not API_KEY:
         return _result({"error": "NOT_CONFIGURED",
-                        "detail": "No API key is set. Add your Frijolito API key in the plugin's settings (/plugin → Frijolito Receipts → Configure), then restart Claude. Verifying receipts works without a key."}, True)
+                        "detail": "No API key is set. Add your Frijolito API key in the plugin's settings (/plugin → Frijolito → Configure), then restart Claude. Verifying receipts works without a key."}, True)
     if API_KEY.startswith("fj_live_") and not ALLOW_LIVE:
         return _result({"error": "LIVE_KEY_BLOCKED",
                         "detail": "The API key is a live key. Turn on 'Allow production receipts' in the plugin's settings to mint production receipts."}, True)

@@ -1,5 +1,5 @@
 ---
-description: Verify a Frijolito receipt by ID or hash
+description: Verify a Frijolito receipt by ID or hash (no account, no key)
 argument-hint: <FJ-… or FJ2-… receipt ID, or 64-char receipt hash>
 ---
 

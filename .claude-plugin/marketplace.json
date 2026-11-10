@@ -1,15 +1,19 @@
 {
   "name": "frijolito",
+  "description": "Frijolito for Claude Code: ask the concierge, follow your requests, and verify signed receipts.",
   "owner": {
     "name": "Frijolito",
     "email": "concierge@frijolito.app"
   },
   "plugins": [
     {
-      "name": "frijolito-receipts",
-      "source": "./plugins/frijolito-receipts",
-      "description": "Verify Frijolito receipts for free, no key needed. Optionally record signed, self-reported receipts with an API key.",
-      "version": "0.5.0"
+      "name": "frijolito",
+      "source": "./plugins/frijolito",
+      "description": "Ask Frijolito, file and follow requests with the team, and verify signed receipts. Verifying needs no account and no key.",
+      "version": "0.6.0"
     }
-  ]
+  ],
+  "renames": {
+    "frijolito-receipts": "frijolito"
+  }
 }
